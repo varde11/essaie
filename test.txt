@@ -1,0 +1,514 @@
+package gameFrame;
+import java.util.Random;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import javax.swing.*;
+
+import java.awt.event.ActionListener;
+//import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+//import java.awt.FlowLayout;
+//import java.awt.Frame;
+import java.awt.event.ActionEvent;
+//import java.util.Arrays<Monster>;
+public class Yugi  implements ActionListener{
+	int a=10;
+	Color color1=new Color(0);
+	Color color2=new Color(0);
+	
+	JFrame menu=new JFrame("Menu");
+	JPanel panel1=new JPanel();
+	JPanel panel2=new JPanel();
+	JTextField zoneMonstre1=new JTextField();
+	JTextField zoneMonstre2=new JTextField();
+	JTextField zoneSort1= new JTextField();
+	JTextField zoneSort2= new JTextField();
+	JTextArea terrain= new JTextArea();
+	JLabel label1=new JLabel("");
+	JLabel label2=new JLabel("");
+	JDialog demande2=new JDialog(menu,"Entrez l'index du monstre à sacrifier",true);
+	JDialog demande1=new JDialog(menu,"Entrez l'index du monstre à sacrifier",true);
+	JTextField valueSacrified1= new JTextField("");
+	JTextField valueSacrified2= new JTextField("");
+	JTextField attaque1=new JTextField ("");
+	JTextField attaque2=new JTextField ("");
+	
+	
+	float pLife1=10*a,pLife2=10*a;
+	boolean isMyround1=true;boolean isMyround2=false;
+	ArrayList<Monster> monstre1 =new ArrayList<>();
+	ArrayList<String>sort1=new ArrayList<> (Arrays.asList("PolyMérisation","DoubleAttaque","Soin","Fire","Resurection","PolyMérisation","DoubleAttaque","Soin","Fire","Resurection"));
+	ArrayList<Monster> monstre2 =new ArrayList<>();
+	ArrayList<String>sort2=new ArrayList<> (Arrays.asList("PolyMérisation","DoubleAttaque","Soin","Fire","Resurection","PolyMérisation","DoubleAttaque","Soin","Fire","Resurection"));
+	ArrayList<Monster> monstreMain1 =new ArrayList<>();
+	ArrayList<String> sortMain1 = new ArrayList<>();
+	ArrayList<Monster> monstreMain2 =new ArrayList<>();
+	ArrayList<String> sortMain2 = new ArrayList<>();
+	ArrayList<Monster> monstrePlayed1 =new ArrayList<>();
+	ArrayList<Monster> monstrePlayed2 =new ArrayList<>();
+	
+	int hauteur1=0;
+	int hauteur2=0;
+	int nombreTour=0;
+	public Yugi() {
+		Dimension d= new Dimension(1600,1600);
+		this.menu.setBounds(0, 0, 1600, 1600);
+		this.menu.setMinimumSize(d);
+		this.panel1.setBounds(0, 0, 300, 1000);
+		this.panel2.setBounds(1200, 0, 300, 1000);
+		this.panel2.setMinimumSize(new Dimension(300,1000));
+		this.menu.setLayout(null);
+		this.panel1.setLayout(null);
+		this.panel2.setLayout(null);
+		for (int i=0;i<2*a;i++) {
+			
+			 Random random=new Random();
+			 //int n1=1+3*i;
+			 int n1= random.nextInt(1, (2*a)+1);
+			 int n2= random.nextInt(1, (2*a)+1);
+			 
+			 this.monstre1.add(new Monster(n1,true,true));//ajout d'un monstre a notre liste de monstre
+			 this.monstre2.add(new Monster(n2,true,true)); 
+			  
+		}
+		for(int i=0;i<=1;i++){//la variable i nest pas directement utilisée, elle assure seulement que juste 2 element soit append.
+			this.monstreMain1.add(this.monstre1.getFirst());
+			this.monstreMain2.add(this.monstre2.getFirst());//au debut, la main contiendra donc 2 carte monstre, qui seront bien sur efface du deck principale.
+			this.monstre1.removeFirst();
+			this.monstre2.removeFirst();
+			
+		}
+		
+		
+		JScrollPane effetScroll =new JScrollPane(this.terrain);//terrain recevra un effet scroll
+		
+		JButton active1= new JButton("Activer");
+		JButton active2= new JButton("Activer");
+		JButton invoquer1= new JButton("Invoquer");
+		JButton invoquer2= new JButton("Invoquer");
+		JButton pioche1=new JButton("Piocher");
+		JButton pioche2=new JButton("Piocher");
+		JButton list1  = new JButton("CarteOwned");
+		JButton list2  = new JButton("CarteOwned");
+		JButton attack1= new JButton("Attaquer");
+		JButton attack2= new JButton("Attaquer");
+		JButton round1= new JButton("Next round");
+		JButton round2= new JButton("Next round");
+		
+		pioche1.setActionCommand("pioche1");
+		pioche2.setActionCommand("pioche2");
+		list1.setActionCommand("list1");
+		list2.setActionCommand("list2");
+		invoquer1.setActionCommand("invoquer1");
+		invoquer2.setActionCommand("invoquer2");
+		active1.setActionCommand("active1");
+		active2.setActionCommand("active2");
+		attack1.setActionCommand("attack1");
+		attack2.setActionCommand("attack2");
+		round1.setActionCommand("round1");
+		round2.setActionCommand("round2");
+		pioche1.addActionListener(this);
+		pioche2.addActionListener(this);
+		list1.addActionListener(this);
+		list2.addActionListener(this);
+		invoquer1.addActionListener(this);
+		invoquer2.addActionListener(this);
+		active1.addActionListener(this);
+		active2.addActionListener(this);
+		attack1.addActionListener(this);
+		attack2.addActionListener(this);
+		round1.addActionListener(this);
+		round2.addActionListener(this);
+		
+		this.terrain.setEditable(true);//rend impossible une édition dans la zone de texte terrain
+		terrain.setBounds(300,0, 1000, 1600);// width(panel1)+width(panel2)+width(terrain)=width(menu)=1600; w(panel1)=width(p2) 
+		pioche1.setBounds(10, 10, 100, 20);	//gauche
+		list1.setBounds(190, 10, 100, 20); //droite
+		this.zoneMonstre1.setBounds(10, 40, 100, 20);//gauche
+		invoquer1.setBounds(190, 40, 100, 20);//droite
+		this.zoneSort1.setBounds(10, 70, 100, 20);//gauche
+		active1.setBounds(190, 70, 100, 20);//droite
+		this.attaque1.setBounds(10, 100, 100, 20);//gauche
+		attack1.setBounds(190, 100, 100, 20);//droite
+		round1.setBounds(60, 130, 180, 20);//le bouton round commence au milieu des autres boutons pour son x, l=(290-190)/2 -60
+		
+		pioche2.setBounds(10, 10, 100, 20);	//gauche
+		list2.setBounds(190, 10, 100, 20); //droite
+		this.zoneMonstre2.setBounds(10, 40, 100, 20);//gauche
+		invoquer2.setBounds(190, 40, 100, 20);//droite
+		this.zoneSort2.setBounds(10, 70, 100, 20);//gauche
+		active2.setBounds(190, 70, 100, 20);//droite ; les coordonnées sont définies par rapport au container qui contient les compoments
+		this.attaque2.setBounds(10, 100, 100, 20);//gauche
+		attack2.setBounds(190, 100, 100, 20);//droite
+		round2.setBounds(60, 130, 180, 20);
+		
+		this.panel1.add(pioche1);
+		this.panel2.add(pioche2);
+		this.panel1.add(list1);
+		this.panel2.add(list2);
+		this.panel1.add(invoquer1);
+		this.panel2.add(invoquer2);
+		this.panel1.add(this.zoneMonstre1);
+		this.panel2.add(zoneMonstre2, 3);
+		this.panel1.add(invoquer1);
+		this.panel2.add(invoquer2);
+		this.panel1.add(this.zoneSort1);
+		this.panel2.add(zoneSort2);
+		//Color c=new Color(0);
+	    this.panel1.add(active1);
+	    this.panel2.add(active2);
+	    this.panel1.add(this.attaque1);
+	    this.panel2.add(this.attaque2);
+	    this.panel1.add(attack1);
+	    this.panel2.add(attack2);
+	    this.panel1.add(round1);
+	    this.panel2.add(round2);
+	    
+		this.panel1.setBackground(this.color1.BLUE);
+		this.panel2.setBackground(this.color2.RED);
+		
+		//this.menu.getContentPane().add(panel1,BorderLayout.WEST);
+		//this.menu.getContentPane().add(panel2,BorderLayout.EAST);
+		this.menu.add(this.panel1);
+		this.menu.add(this.panel2);
+		this.menu.add(effetScroll);//JButton b=new JButton("bjr"); b.setBounds(10, 10, 500, 20);
+		
+		this.menu.pack();
+		this.menu.setVisible(true);
+	}
+	
+	public void piocher(ArrayList<Monster> tabMain,ArrayList<String>sortMain, JPanel p,ArrayList<Monster> tab,ArrayList<String>sort) {
+		
+		//while( tabMain.size()<=4 && tab.size()!=0  ) {
+			if(tabMain.size()<=4 && tab.size()!=0) {
+				//System.out.println("taille1Monstre:"+tabMain.size());
+				tabMain.add(tab.getFirst());
+				tab.removeFirst();//on ajoute le first element a notre main et on le supprime du deck
+				//System.out.println("taille2Monstre:"+tabMain.size());
+			}
+			else if (tabMain.size()>4) 
+				JOptionPane.showMessageDialog(p, "Vous ne pouvez pas tirez d'autres cartes Monstres, votre main en est pleine!", "Action impossible", JOptionPane.ERROR_MESSAGE);
+			   
+			
+			else  // arrivé ici, ca signifi  forcement que (tab.size()==0)
+				
+				JOptionPane.showMessageDialog(p, "Vous ne pouvez pas tirez d'autres cartes Monstres, votre deck n'en contient plus!", "Action impossible", JOptionPane.ERROR_MESSAGE);
+			
+			
+		//}
+		//while(sortMain.size()<=2 && sort.size()!=0) { elle ne servait a rien les boucle while !
+			if(sortMain.size()<=2 && sort.size()!=0) {
+				System.out.println("taille1Sort:"+sortMain.size());
+				sortMain.add(sort.getFirst());
+				System.out.println("taille2Sort:"+sortMain.size());
+				sort.removeFirst();//remove and returnss the first element donc pourra etre stocker dans un cimetiere!
+			}
+			else if (sortMain.size()>2) 
+				JOptionPane.showMessageDialog(p, "Vous ne pouvez pas tirez d'autres cartes sorts, votre main en est pleine!", "Action impossible", JOptionPane.ERROR_MESSAGE);
+			
+			else //arrivé ici, ca signifi  forcement que (sort.size()==0)
+				JOptionPane.showMessageDialog(p, "Vous ne pouvez pas tirez d'autres cartes sorts, votre deck n'en contient plus!", "Action impossible", JOptionPane.ERROR_MESSAGE);
+		
+		//}
+		
+		
+		}
+		
+		
+	
+	
+	public void invocation(JTextField zone,JFrame f,JPanel p,JButton sacrifier,JButton cancel ,ArrayList<Monster> monstreAInv,ArrayList<Monster> monstreInv,int x,JLabel label,int xLabel,JTextField valueSacrified,JDialog demande) {
+		String text=zone.getText();
+		label.setBounds(xLabel, 0, 500, 20);//xLabel=320 pour j1;xLabel=920 pour j2
+		if(text.isBlank()) 
+			JOptionPane.showMessageDialog(p, "Vous devez entrer l'index de votre monstre: c'est un nombre entier!", "Index invalide", JOptionPane.ERROR_MESSAGE);
+		
+		else {
+			int index=Math.abs(Integer.parseInt(text));
+			if(index>monstreAInv.size() || index==0)
+				JOptionPane.showMessageDialog(p, "L'index que vous avez entré ne correspond à aucun index de vos monstres.", "Index invalide", JOptionPane.ERROR_MESSAGE);
+			else {
+				if ((monstreAInv.get(index-1).attackPoint)/10 >=1) {
+					JOptionPane.showMessageDialog(p, "Votre invocation requiere un sacrifice!", "Invocation impossible", JOptionPane.ERROR_MESSAGE);
+					
+					//JTextField valueSacrified= new JTextField();
+					demande.setLayout(null);
+					demande.setBounds(x, 600, 300, 300);//x=0 pour j1;pour j2 x=1200 ou 1300... a voir au test
+					demande.setMinimumSize(new Dimension(300,300));	
+					valueSacrified.setBounds(10, 10, 280, 20);//280+10+10=300; un espace de 10 de chaque coté
+					sacrifier.setBounds(10, 200, 100, 20);
+					cancel.setBounds(180, 200, 100, 20);
+					demande.add(valueSacrified);
+					demande.add(sacrifier);
+					demande.add(cancel);
+					demande.pack();
+					demande.setVisible(true);
+
+					//f.add(demande);
+					
+					 
+					
+					/*sacrifier.addActionListener(new ActionListener() {
+						
+						public void action(ActionEvent e) {
+							
+							String sacrificeStr = valueSacrified.getText();
+							int index=Math.abs(Integer.parseInt(zone.getText()));
+							if (sacrificeStr.isBlank())
+								JOptionPane.showMessageDialog(p, "Vous devez entrer l'index de votre monstre: c'est un nombre entier!", "Index invalide", JOptionPane.ERROR_MESSAGE);
+							else {
+								int sacrificeInt=Math.abs(Integer.parseInt(sacrificeStr));
+								if (sacrificeInt>monstreAInv.size() || sacrificeInt==0)
+									JOptionPane.showMessageDialog(p, "L'index que vous avez entré ne correspond à aucun index de vos monstres.", "Index invalide", JOptionPane.ERROR_MESSAGE);
+								else {
+									if(monstreAInv.get(sacrificeInt-1).attackPoint*2<monstreAInv.get(index-1).attackPoint)
+										JOptionPane.showMessageDialog(p, "Votre sacrifice est tros faible pour cet invocation.", "Invocation impossible", JOptionPane.ERROR_MESSAGE);
+									else {
+										monstreInv.add(monstreAInv.get(sacrificeInt-1));
+										label.setText("Monstre en jeux: "+monstreInv);//pour afficher les monstre invoqué
+									}
+								}
+							}
+							demande.dispose();//le bouton cancek detruit la boite de dialogue
+						}
+					});
+					/*cancel.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent i) {
+							demande.dispose();//le bouton cancek detruit la boite de dialogue
+							System.out.print("coucou");
+						}
+					});*/
+					
+				}
+				
+				else {
+					if(monstreInv.size()<=2) {
+						if(monstreAInv.get(index-1).estInvoquable) {
+							monstreInv.add(monstreAInv.get(index-1));// le monstre est dun niveau assez faible pour etre invoq directement
+							label.setText("Monstre en jeux: "+monstreInv);
+							monstreAInv.get(index-1).setEstInvoquable(false);//le monstre ne pourra plus etre invoquer
+						}
+						else
+							JOptionPane.showMessageDialog(p, "Votre monstre a déjà été invoqué!", "Invocation impossible", JOptionPane.ERROR_MESSAGE);
+					}
+					else
+						JOptionPane.showMessageDialog(p, "Votre terrain ne peut plus contenir de monstre!", "Invocation impossible", JOptionPane.ERROR_MESSAGE);
+				}
+			}	
+					//afficher le message demandant le sacrifice et ouvir la boite de dialogue
+		}
+		
+	}//this.sacrificeperf(zoneMonstre1, panel1, monstreMain1, monstrePlayed1, label1);
+	public  void sacrificeperf(JTextField zone,JPanel p,ArrayList<Monster> monstreAInv,ArrayList<Monster> monstreInv,JLabel label,JTextField valueSacrified,JDialog demande) {
+		String sacrificeStr = valueSacrified.getText();
+		int index=Math.abs(Integer.parseInt(zone.getText()));
+		if (sacrificeStr.isBlank())
+			JOptionPane.showMessageDialog(p, "Vous devez entrer l'index de votre monstre: c'est un nombre entier!", "Index invalide", JOptionPane.ERROR_MESSAGE);
+		else {
+			int sacrificeInt=Math.abs(Integer.parseInt(sacrificeStr));
+			if (sacrificeInt>monstreAInv.size() || sacrificeInt==0)
+				JOptionPane.showMessageDialog(p, "L'index que vous avez entré ne correspond à aucun index de vos monstres.", "Index invalide", JOptionPane.ERROR_MESSAGE);
+			else if(index==sacrificeInt)
+				JOptionPane.showMessageDialog(p, "Le monstre à invoquer et le monstre à sacrifier sont identique.", "Index invalide", JOptionPane.ERROR_MESSAGE);
+			else {
+				if(monstreAInv.get(sacrificeInt-1).attackPoint*2<monstreAInv.get(index-1).attackPoint)
+					JOptionPane.showMessageDialog(p, "Votre sacrifice est tros faible pour cet invocation.", "Invocation impossible", JOptionPane.ERROR_MESSAGE);
+				else {
+					if(monstreAInv.get(index-1).estInvoquable) {
+						
+						if(monstreInv.size()>2 && (monstreAInv.get(sacrificeInt-1).estInvoquable))
+							JOptionPane.showMessageDialog(p, "Votre terrain ne peut plus contenir de monstre!!", "Invocation impossible", JOptionPane.ERROR_MESSAGE);
+						
+						
+						if(monstreInv.size()<=2 ) {
+							monstreInv.add(monstreAInv.get(index-1));
+							monstreAInv.get(index-1).setEstInvoquable(false);
+							monstreAInv.remove(sacrificeInt-1);//le sacrifice quitte la main: la liste des monstre a invoqué
+						}
+						
+						
+						if( !(monstreAInv.get(sacrificeInt-1).estInvoquable)){// si le monstre a sacrifier a deja ete invoquer:
+								monstreInv.add(monstreAInv.get(index-1));
+								monstreAInv.get(index-1).setEstInvoquable(false);
+								Monster a=monstreAInv.remove(sacrificeInt-1);// a devient l'lement supprimer
+								monstreInv.remove(a);
+						}
+							//System.out.println("elemn delete");//on le supprime de la liste des monstre invoquer
+						//monstreAInv.remove(sacrificeInt-1);//le sacrifice quitte la main: la liste des monstre a invoqué
+						label.setText("Monstre en jeux: "+monstreInv);//pour afficher les monstre invoqué
+						System.out.print("done");
+						//valueSacrified.setText("");
+						demande.dispose();
+					}
+					else
+						JOptionPane.showMessageDialog(p, "Votre monstre a déjà été invoqué!", "Invocation impossible", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
+		//demande.dispose();//le bouton cancek detruit la boite de dialogue
+	}
+	
+	
+	
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String command=e.getActionCommand();
+		
+		JButton sacrifier1 = new JButton("Sacrifier");sacrifier1.setActionCommand("sacrifier1");
+		JButton cancel = new  JButton("Cancel");cancel.setActionCommand("cancel");
+		JButton sacrifier2 = new JButton("Sacrifier");sacrifier2.setActionCommand("sacrifier2");
+		cancel.addActionListener(this);
+		sacrifier1.addActionListener(this);
+		sacrifier2.addActionListener(this);
+			switch(command) {
+				case "pioche1":
+					if(this.isMyround1 && this.nombreTour%2==0) {
+						piocher(this.monstreMain1,this.sortMain1,this.panel1,this.monstre1,this.sort1);
+						//System.out.print(this.sortMain1.size());
+						this.nombreTour++;//garanti un piochage par tour
+						break;
+					}
+					else if(!this.isMyround1) {
+						JOptionPane.showMessageDialog(this.panel1, "Vous ne pouvez pas piocher pendant le tour de l'adversaire!", "Action invalide", JOptionPane.ERROR_MESSAGE);
+						break;
+					}
+					
+					
+					else {
+						
+						JOptionPane.showMessageDialog(this.panel1, "Vous n'avez droit qu'à une pioche par tour!", "Action invalide", JOptionPane.ERROR_MESSAGE);
+						break;
+					}
+						
+				case "pioche2":
+					if(this.isMyround2 && this.nombreTour%2==1) {
+						piocher(this.monstreMain2,this.sortMain2,this.panel2,this.monstre2,this.sort2);
+						this.nombreTour++;
+						break;
+					}
+					else if(!this.isMyround2) {
+						JOptionPane.showMessageDialog(this.panel2, "Vous ne pouvez pas piocher pendant le tour de l'adversaire!", "Action invalide", JOptionPane.ERROR_MESSAGE);
+						break;
+					}
+					
+					
+					else {
+						
+						JOptionPane.showMessageDialog(this.panel2, "Vous n'avez droit qu'à une pioche par tour!", "Action invalide", JOptionPane.ERROR_MESSAGE);
+						break;
+					}
+						
+					
+				case "list1":
+					JOptionPane.showMessageDialog(this.panel1,"Carte monstre:"+ this.monstreMain1.toString()+" & Carte magique:"+this.sortMain1, "Vos cares en main", JOptionPane.INFORMATION_MESSAGE);
+					break;
+				case "list2":
+					JOptionPane.showMessageDialog(this.panel2,"Carte monstre:"+ this.monstreMain2+" & Carte magique:"+this.sortMain2, "Vos cares en main", JOptionPane.INFORMATION_MESSAGE);
+					break;
+				case "invoquer1":
+					if(this.isMyround1) {
+						invocation(this.zoneMonstre1, this.menu, this.panel1,sacrifier1,cancel, this.monstreMain1, this.monstrePlayed1, 0, this.label1, 320,this.valueSacrified1,demande1);
+						this.menu.add(this.label1);
+						this.menu.pack();
+						this.menu.repaint();
+						
+						break;
+					}
+					else {
+						JOptionPane.showMessageDialog(this.panel1, "Vous ne pouvez pas invoquer pendant le tour de l'adversaire!", "Action invalide", JOptionPane.ERROR_MESSAGE);
+						break;
+					}
+				case"active1":
+					String contenue=this.zoneSort1.getText();
+					if(contenue.isBlank())
+						JOptionPane.showMessageDialog(this.panel1, "Vous devez entrer l'index de votre sort: c'est un nombre entier!", "Index invalide", JOptionPane.ERROR_MESSAGE);
+					else {
+						int indexe=Math.abs(Integer.parseInt(contenue));
+						if(indexe>this.sortMain1.size() || indexe==0) 
+							
+							JOptionPane.showMessageDialog(this.panel1, "L'index que vous avez entré ne correspond à aucun index de vos sorts.", "Index invalide", JOptionPane.ERROR_MESSAGE);
+						else {
+							JLabel sortOn=new JLabel("Vous avez activé le sort "+sortMain1.get(indexe-1)+" ses effets seront définis à la prochaine maj.");
+							JOptionPane.showMessageDialog(this.panel1, sortOn);
+						}
+					}
+					break;
+				case"invoquer2":
+					if(this.isMyround2) {
+						invocation(this.zoneMonstre2, this.menu, this.panel2,sacrifier2,cancel, this.monstreMain2, this.monstrePlayed2, 1200, this.label2, 900,this.valueSacrified2,demande2);
+						this.menu.add(this.label2);
+						this.menu.pack();
+						this.menu.repaint();
+						
+						
+						break;
+					}
+					else {
+						JOptionPane.showMessageDialog(this.panel2, "Vous ne pouvez pas invoquer pendant le tour de l'adversaire!", "Action invalide", JOptionPane.ERROR_MESSAGE);
+						break;
+					}
+					
+				case"active2":
+					String Contenue=this.zoneSort2.getText();
+					if(Contenue.isBlank())
+						JOptionPane.showMessageDialog(this.panel2, "Vous devez entrer l'index de votre sort: c'est un nombre entier!", "Index invalide", JOptionPane.ERROR_MESSAGE);
+					else {
+						int Indexe=Math.abs(Integer.parseInt(Contenue));
+						if(Indexe>this.sortMain1.size() || Indexe==0) 
+							
+							JOptionPane.showMessageDialog(this.panel2, "L'index que vous avez entré ne correspond à aucun index de vos sorts.", "Index invalide", JOptionPane.ERROR_MESSAGE);
+						else {
+							JLabel SortOn=new JLabel("Vous avez activé le sort "+sortMain2.get(Indexe-1)+" ses effets seront définis à la prochaine maj.");
+							JOptionPane.showMessageDialog(this.panel2, SortOn);//SortOn actication du sort
+						}
+					}
+					break;
+				case"cancel":
+					demande1.dispose();
+					demande2.dispose();
+					break;
+				case"sacrifier1":
+					this.sacrificeperf(zoneMonstre1, panel1, monstreMain1, monstrePlayed1, label1,this.valueSacrified1,demande1);
+					System.out.print("done1");
+					//this.zoneMonstre1.setText("");
+					break;
+				
+				case"sacrifier2":
+					this.sacrificeperf(zoneMonstre2, panel2, monstreMain2, monstrePlayed2, label2,this.valueSacrified2,demande2);
+					System.out.print("done2");
+					//this.zoneMonstre2.setText("");
+					break;
+				case "round1":
+					if(this.isMyround1) {
+						this.isMyround1=false;
+						this.isMyround2=true;
+						break;
+					}
+					else {
+						JOptionPane.showMessageDialog(this.panel1, "Vous ne pouvez passer le tour de l'adversaire!", "Action invalide", JOptionPane.ERROR_MESSAGE);
+						break;
+					}
+					
+				case "round2":
+					if(this.isMyround2) {
+						this.isMyround2=false;
+						this.isMyround1=true;
+						break;
+					}
+					else {
+						JOptionPane.showMessageDialog(this.panel2, "Vous ne pouvez passer le tour de l'adversaire!", "Action invalide", JOptionPane.ERROR_MESSAGE);
+						break;
+					}
+					
+			}
+			
+		 
+	}
+	
+
+
+}
